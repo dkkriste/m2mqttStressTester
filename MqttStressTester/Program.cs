@@ -35,10 +35,7 @@
             foreach (var task in tasks)
             {
                 task.Wait();
-                Console.WriteLine("Task done");
             }
-
-            Console.WriteLine("AllDone");
         }
     }
 }
