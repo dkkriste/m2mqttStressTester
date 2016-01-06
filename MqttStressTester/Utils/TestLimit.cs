@@ -21,14 +21,19 @@
 
         public int NumberOfMessagesRecieved { get; private set; }
 
-        public bool IsTestComplete()
+        public bool AreMaxMessagesSendt()
         {
-            if (NumberOfMessagesSent >= maxNumberOfMessages || DateTimeOffset.Now >= startTime + maxDuration)
-            {
-                return true;
-            }
+            return NumberOfMessagesSent >= maxNumberOfMessages;
+        }
 
-            return false;
+        public bool IsTimeUp()
+        {
+            return DateTimeOffset.Now >= startTime + maxDuration;
+        }
+
+        public bool AreAllSendtMessagesRecieved()
+        {
+            return NumberOfMessagesSent <= NumberOfMessagesRecieved;
         }
 
         public void MessageRecieved()

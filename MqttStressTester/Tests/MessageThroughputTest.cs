@@ -3,7 +3,9 @@
     using System;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
 
+    using MqttStressTester.Contracts;
     using MqttStressTester.Models;
     using MqttStressTester.Utils;
 
@@ -14,7 +16,7 @@
 
     public class MessageThroughputTest : IMqttTest
     {
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
         private MqttClient client;
 
@@ -26,19 +28,23 @@
 
         private ThroughputTimeMessage[] messages;
 
-        public MessageThroughputTest()
+        private TimeSpan totalTime;
+
+        private TimeSpan maxTime;
+
+        public MessageThroughputTest(ILogger logger)
         {
-            logger = new Logger();
+            this.logger = logger;
         }
 
         public void Test(string brokerIp, TimeSpan maxDuration, int maxNumberOfMessages, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages)
         {
             InitConnection(brokerIp);
-            testLimit = new TestLimit(maxDuration, maxNumberOfMessages);
-            threadSleepTime = new ThreadSleepTime(minTimeBetweenMessages, maxTimeBetweenMessages);
-            messages = new ThroughputTimeMessage[maxNumberOfMessages];
+            Init(maxDuration, maxNumberOfMessages, minTimeBetweenMessages, maxTimeBetweenMessages);
 
-            while (!testLimit.IsTestComplete())
+            logger.LogMetric("Start", 1);
+
+            while (!testLimit.AreMaxMessagesSendt() && !testLimit.IsTimeUp())
             {
                 var message = new ThroughputTimeMessage { MessageNumber = testLimit.NumberOfMessagesSent, MessageSendtTime = DateTimeOffset.Now };
                 messages[message.MessageNumber] = message;
@@ -49,6 +55,25 @@
 
                 Thread.Sleep(threadSleepTime.GetRandomSleepTime());
             }
+
+            while (!testLimit.AreAllSendtMessagesRecieved() && !testLimit.IsTimeUp())
+            {
+                Thread.Sleep(threadSleepTime.GetRandomSleepTime());
+            }
+
+            client.Disconnect();
+            logger.LogMetric("Max", maxTime.Ticks);
+            logger.LogMetric("Average", totalTime.Ticks / (testLimit.NumberOfMessagesRecieved * 1.0));
+            logger.LogMetric("End", 1);
+        }
+
+        private void Init(TimeSpan maxDuration, int maxNumberOfMessages, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages)
+        {
+            testLimit = new TestLimit(maxDuration, maxNumberOfMessages);
+            threadSleepTime = new ThreadSleepTime(minTimeBetweenMessages, maxTimeBetweenMessages);
+            messages = new ThroughputTimeMessage[maxNumberOfMessages];
+            totalTime = new TimeSpan();
+            maxTime = new TimeSpan();
         }
 
         private void InitConnection(string brokerIp)
@@ -78,13 +103,18 @@
             {
                 var serializedMessage = Encoding.UTF8.GetString(e.Message);
                 var message = JsonConvert.DeserializeObject<ThroughputTimeMessage>(serializedMessage);
-                var roundTripTime = messages[message.MessageNumber].MessageSendtTime - DateTimeOffset.Now;
-                logger.LogMessage("MessageThroughputTest", roundTripTime.ToString());
+                var roundTripTime = DateTimeOffset.Now - messages[message.MessageNumber].MessageSendtTime;
+                totalTime += roundTripTime;
+                if (roundTripTime > maxTime)
+                {
+                    maxTime = roundTripTime;
+                }
+
                 testLimit.MessageRecieved();
             }
             catch (Exception exception)
             {
-                logger.LogMessage("Exception", exception.Message);
+                logger.LogException(exception);
             }
         }
     }
