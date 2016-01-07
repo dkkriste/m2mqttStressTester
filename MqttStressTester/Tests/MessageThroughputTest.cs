@@ -70,8 +70,10 @@
 
             this.DisconectMqtt();
              
-            this.LogMetric(LoggerConstants.Max, maxTime.Ticks);
-            this.LogMetric(LoggerConstants.Average, totalTime.Ticks / (this.TestLimits.NumberOfMessagesRecieved * 1.0));
+            this.LogMetric(LoggerConstants.Max, maxTime.Ticks / 10000.0);
+            this.LogMetric(LoggerConstants.Average, (totalTime.Ticks / 10000.0) / this.TestLimits.NumberOfMessagesRecieved);
+            this.LogMetric(LoggerConstants.Sent, this.TestLimits.NumberOfMessagesSent);
+            this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesSent / ((this.TestLimits.TimeSpendt().Ticks / 10000.0) / 1000));
             this.LogTestEnd();
         }
 

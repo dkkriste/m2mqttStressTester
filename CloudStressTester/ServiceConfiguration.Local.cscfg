@@ -3,7 +3,9 @@
   <Role name="CloudMqttStressTester">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=mqttstresstestdata;AccountKey=niw3Kfu3VqCViUVnlmKhtf1ZetWQkV4jHrXzvYxo/xjUp4AmMU3Ur8UtcjS+DkZmAvPeArBm0R0s3cKCRQkuBw==;BlobEndpoint=https://mqttstresstestdata.blob.core.windows.net/;TableEndpoint=https://mqttstresstestdata.table.core.windows.net/;QueueEndpoint=https://mqttstresstestdata.queue.core.windows.net/;FileEndpoint=https://mqttstresstestdata.file.core.windows.net/" />
+      <Setting name="BrokerIp" value="40.115.34.138" />
+      <Setting name="Telemetry.AI.InstrumentationKey" value="a90d74c2-e822-492e-a231-0aad11387c31" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

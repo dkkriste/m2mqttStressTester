@@ -45,5 +45,10 @@
         {
             NumberOfMessagesSent++;
         }
+
+        public TimeSpan TimeSpendt()
+        {
+            return DateTimeOffset.Now - startTime;
+        }
     }
 }
