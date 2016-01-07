@@ -2,19 +2,19 @@
 {
     using System;
 
-    public class TestLimit
+    public class TestLimits
     {
+        public readonly int MaxNumberOfMessages;
+
         private readonly DateTimeOffset startTime;
 
         private readonly TimeSpan maxDuration;
 
-        private readonly int maxNumberOfMessages;
-
-        public TestLimit(TimeSpan maxDuration, int maxNumberOfMessages)
+        public TestLimits(int maxNumberOfMessages, TimeSpan maxDuration)
         {
             startTime = DateTimeOffset.Now;
             this.maxDuration = maxDuration;
-            this.maxNumberOfMessages = maxNumberOfMessages;
+            this.MaxNumberOfMessages = maxNumberOfMessages;
         }
 
         public int NumberOfMessagesSent { get; private set; }
@@ -23,7 +23,7 @@
 
         public bool AreMaxMessagesSendt()
         {
-            return NumberOfMessagesSent >= maxNumberOfMessages;
+            return NumberOfMessagesSent >= MaxNumberOfMessages;
         }
 
         public bool IsTimeUp()

@@ -3,7 +3,6 @@
     using System;
     using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using MqttStressTester.Contracts;
     using MqttStressTester.Models;
@@ -11,93 +10,72 @@
 
     using Newtonsoft.Json;
 
-    using uPLibrary.Networking.M2Mqtt;
     using uPLibrary.Networking.M2Mqtt.Messages;
 
-    public class MessageThroughputTest : IMqttTest
+    public class MessageThroughputTest : TestBase, IMqttTest
     {
-        private readonly ILogger logger;
-
-        private MqttClient client;
-
-        private Guid clientId;
-
-        private TestLimit testLimit;
-
-        private ThreadSleepTime threadSleepTime;
-
-        private ThroughputTimeMessage[] messages;
+        private readonly ThroughputTimeMessage[] messages;
 
         private TimeSpan totalTime;
 
         private TimeSpan maxTime;
 
-        public MessageThroughputTest(ILogger logger)
+        public MessageThroughputTest() : base(null, string.Empty, null, null, string.Empty)
         {
-            this.logger = logger;
         }
 
-        public void Test(string brokerIp, TimeSpan maxDuration, int maxNumberOfMessages, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages)
+        public MessageThroughputTest(
+            ILogger logger,
+            string brokerIp,
+            TestLimits testLimitses,
+            ThreadSleepTimes threadSleepTimeses) : base(logger, brokerIp, testLimitses, threadSleepTimeses, "ThroughputTest")
         {
-            InitConnection(brokerIp);
-            Init(maxDuration, maxNumberOfMessages, minTimeBetweenMessages, maxTimeBetweenMessages);
-
-            logger.LogMetric("Start", 1);
-
-            while (!testLimit.AreMaxMessagesSendt() && !testLimit.IsTimeUp())
-            {
-                var message = new ThroughputTimeMessage { MessageNumber = testLimit.NumberOfMessagesSent, MessageSendtTime = DateTimeOffset.Now };
-                messages[message.MessageNumber] = message;
-
-                var serializedMessage = JsonConvert.SerializeObject(message);
-                Publish(clientId.ToString(), serializedMessage);
-                testLimit.MessagesSent();
-
-                Thread.Sleep(threadSleepTime.GetRandomSleepTime());
-            }
-
-            while (!testLimit.AreAllSendtMessagesRecieved() && !testLimit.IsTimeUp())
-            {
-                Thread.Sleep(threadSleepTime.GetRandomSleepTime());
-            }
-
-            client.Disconnect();
-            logger.LogMetric("Max", maxTime.Ticks);
-            logger.LogMetric("Average", totalTime.Ticks / (testLimit.NumberOfMessagesRecieved * 1.0));
-            logger.LogMetric("End", 1);
-        }
-
-        private void Init(TimeSpan maxDuration, int maxNumberOfMessages, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages)
-        {
-            testLimit = new TestLimit(maxDuration, maxNumberOfMessages);
-            threadSleepTime = new ThreadSleepTime(minTimeBetweenMessages, maxTimeBetweenMessages);
-            messages = new ThroughputTimeMessage[maxNumberOfMessages];
+            messages = new ThroughputTimeMessage[this.TestLimits.MaxNumberOfMessages];
             totalTime = new TimeSpan();
             maxTime = new TimeSpan();
         }
 
-        private void InitConnection(string brokerIp)
+        public IMqttTest Create(
+            ILogger logger,
+            string brokerIp,
+            TestLimits testLimitses,
+            ThreadSleepTimes threadSleepTimeses)
         {
-            clientId = Guid.NewGuid();
-
-            client = new MqttClient(brokerIp);
-            client.MqttMsgPublishReceived += OnMqttClientMsgPublishReceived;
-
-            client.Connect(clientId.ToString());
-            Subscribe(clientId.ToString());
+            return new MessageThroughputTest(logger, brokerIp, testLimitses, threadSleepTimeses);
         }
 
-        private void Subscribe(string topicName)
+        public void RunTest()
         {
-            client.Subscribe(new[] { topicName }, new[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+            this.LogTestBegin();
+
+            this.ConnectMqtt();
+            this.SubscribeMqtt(this.ClientId.ToString());
+
+            while (!this.TestLimits.AreMaxMessagesSendt() && !this.TestLimits.IsTimeUp())
+            {
+                var message = new ThroughputTimeMessage { MessageNumber = this.TestLimits.NumberOfMessagesSent, MessageSendtTime = DateTimeOffset.Now };
+                messages[message.MessageNumber] = message;
+
+                var serializedMessage = JsonConvert.SerializeObject(message);
+                this.PublishMqtt(this.ClientId.ToString(), serializedMessage);
+                this.TestLimits.MessagesSent();
+
+                Thread.Sleep(this.ThreadSleepTimes.GetRandomSleepTime());
+            }
+
+            while (!this.TestLimits.AreAllSendtMessagesRecieved() && !this.TestLimits.IsTimeUp())
+            {
+                Thread.Sleep(this.ThreadSleepTimes.GetRandomSleepTime());
+            }
+
+            this.DisconectMqtt();
+             
+            this.LogMetric(LoggerConstants.Max, maxTime.Ticks);
+            this.LogMetric(LoggerConstants.Average, totalTime.Ticks / (this.TestLimits.NumberOfMessagesRecieved * 1.0));
+            this.LogTestEnd();
         }
 
-        private void Publish(string topic, string message)
-        {
-            client.Publish(topic, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
-        }
-
-        private void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
+        protected override void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
             try
             {
@@ -110,11 +88,12 @@
                     maxTime = roundTripTime;
                 }
 
-                testLimit.MessageRecieved();
+                this.TestLimits.MessageRecieved();
             }
             catch (Exception exception)
             {
-                logger.LogException(exception);
+                this.LogException(exception);
+                this.LogEvent("Exception", this.Client.IsConnected.ToString());
             }
         }
     }

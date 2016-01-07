@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class ThreadSleepTime
+    public class ThreadSleepTimes
     {
         private readonly TimeSpan minSleepTime;
 
@@ -10,7 +10,7 @@
 
         private readonly Random randomNumberGenerator;
 
-        public ThreadSleepTime(TimeSpan minSleepTime, TimeSpan maxSleepTime)
+        public ThreadSleepTimes(TimeSpan minSleepTime, TimeSpan maxSleepTime)
         {
             this.minSleepTime = minSleepTime;
             this.maxSleepTime = maxSleepTime;
