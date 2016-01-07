@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>2.7</ProductVersion>
-    <ProjectGuid>b483e668-ea9b-44a2-9a22-0c5d65b9e0e2</ProjectGuid>
+    <ProjectGuid>7b81cf19-f842-44ff-b8af-bda4af3f8079</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CloudStressTester</RootNamespace>
@@ -48,13 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CloudMqttStressTesterContent\" />
-    <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="CloudMqttStressTesterContent\diagnostics.wadcfgx" />
-  </ItemGroup>
-  <ItemGroup>
-    <PublishProfile Include="Profiles\broker-stress-testProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

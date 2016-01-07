@@ -3,8 +3,9 @@
   <WorkerRole name="CloudMqttStressTester" vmsize="Small">
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
-      <Setting name="BrokerIp" />
-      <Setting name="Telemetry.AI.InstrumentationKey" />
     </ConfigurationSettings>
+    <Endpoints>
+      <InputEndpoint name="MQTT" protocol="tcp" port="1883" />
+    </Endpoints>
   </WorkerRole>
 </ServiceDefinition>
