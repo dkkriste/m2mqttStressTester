@@ -16,7 +16,7 @@ namespace CloudMqttStressTester
 
     public class WorkerRole : RoleEntryPoint
     {
-        private const int NumberOfThreads = 16;
+        private const int DefaultNumberOfThreads = 8;
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
@@ -66,6 +66,12 @@ namespace CloudMqttStressTester
         {
             ILogger logger = new ApplicationInsightsLogger();
             var brokerIp = CloudConfigurationManager.GetSetting("BrokerIp");
+            int numberOfThreads;
+            var threadSet = int.TryParse(CloudConfigurationManager.GetSetting("Threads"), out numberOfThreads);
+            if (!threadSet)
+            {
+                numberOfThreads = DefaultNumberOfThreads;
+            }
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -73,15 +79,15 @@ namespace CloudMqttStressTester
                 {
                     logger.LogEvent("Started", "Broker: " + brokerIp);
 
-                    //var throughputTest = new MessageThroughputTest();
-                    //var testSetup = new TestSetup(logger, brokerIp, throughputTest, NumberOfThreads);
-                    //testSetup.RunThroughputTest();
+                    var throughputTest = new MessageThroughputTest();
+                    var testSetup = new TestSetup(logger, brokerIp, throughputTest, numberOfThreads);
+                    testSetup.RunThroughputTest();
 
-                    var concurrentConnectonTest = new ConcurrentConnectionTest();
-                    var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
-                    concurrentConnectonTestSetup.RunThroughputTest(100, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 0, 1), new TimeSpan(0, 0, 2));
+                    //var concurrentConnectonTest = new ConcurrentConnectionTest();
+                    //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
+                    //concurrentConnectonTestSetup.RunThroughputTest(100, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 0, 1), new TimeSpan(0, 0, 2));
 
-                    logger.LogEvent("Completed", "Completed test using " + NumberOfThreads + " threads");
+                    logger.LogEvent("Completed", "Completed test using " + numberOfThreads + " threads");
                 }
                 catch (Exception exception)
                 {

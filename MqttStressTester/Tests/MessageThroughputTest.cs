@@ -14,8 +14,6 @@
 
     public class MessageThroughputTest : TestBase, IMqttTest
     {
-        private readonly ThroughputTimeMessage[] messages;
-
         private TimeSpan totalTime;
 
         private TimeSpan maxTime;
@@ -30,7 +28,6 @@
             TestLimits testLimitses,
             ThreadSleepTimes threadSleepTimeses) : base(logger, brokerIp, testLimitses, threadSleepTimeses, "ThroughputTest")
         {
-            messages = new ThroughputTimeMessage[this.TestLimits.MaxNumberOfMessages];
             totalTime = new TimeSpan();
             maxTime = new TimeSpan();
         }
@@ -54,8 +51,6 @@
             while (!this.TestLimits.AreMaxMessagesSendt() && !this.TestLimits.IsTimeUp())
             {
                 var message = new ThroughputTimeMessage { MessageNumber = this.TestLimits.NumberOfMessagesSent, MessageSendtTime = DateTimeOffset.Now };
-                messages[message.MessageNumber] = message;
-
                 var serializedMessage = JsonConvert.SerializeObject(message);
                 this.PublishMqtt(this.ClientId.ToString(), serializedMessage);
                 this.TestLimits.MessagesSent();
@@ -70,10 +65,10 @@
 
             this.DisconectMqtt();
              
-            this.LogMetric(LoggerConstants.Max, maxTime.Ticks / 10000.0);
-            this.LogMetric(LoggerConstants.Average, (totalTime.Ticks / 10000.0) / this.TestLimits.NumberOfMessagesRecieved);
+            this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
+            this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
             this.LogMetric(LoggerConstants.Sent, this.TestLimits.NumberOfMessagesSent);
-            this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesSent / ((this.TestLimits.TimeSpendt().Ticks / 10000.0) / 1000));
+            this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesSent / (this.TestLimits.TimeSpendt().GetMilliseconds() / 1000));
             this.LogTestEnd();
         }
 
@@ -83,7 +78,7 @@
             {
                 var serializedMessage = Encoding.UTF8.GetString(e.Message);
                 var message = JsonConvert.DeserializeObject<ThroughputTimeMessage>(serializedMessage);
-                var roundTripTime = DateTimeOffset.Now - messages[message.MessageNumber].MessageSendtTime;
+                var roundTripTime = DateTimeOffset.Now - message.MessageSendtTime;
                 totalTime += roundTripTime;
                 if (roundTripTime > maxTime)
                 {

@@ -33,10 +33,10 @@
             this.testToBeRun = testToBeRun;
             this.threads = threads;
 
-            DefaultMaxTestTime = new TimeSpan(0, 1, 0);
-            DefaultMaxNumberOfMessages = 10000;
+            DefaultMaxTestTime = new TimeSpan(0, 5, 0);
+            DefaultMaxNumberOfMessages = int.MaxValue;
             DefaultMinTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 10);
-            DefaultMaxTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 100);
+            DefaultMaxTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 50);
         }
 
         /// <summary>

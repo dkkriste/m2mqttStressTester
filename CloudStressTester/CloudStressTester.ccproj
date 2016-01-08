@@ -48,9 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CloudMqttStressTesterContent\" />
+    <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="CloudMqttStressTesterContent\diagnostics.wadcfgx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\broker-stress-testProduction1.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

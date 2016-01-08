@@ -5,6 +5,7 @@
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" />
       <Setting name="BrokerIp" />
       <Setting name="Telemetry.AI.InstrumentationKey" />
+      <Setting name="Threads" />
     </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

@@ -26,6 +26,7 @@
         public void LogException(Exception exception)
         {
             applicationInsightsClient.TrackException(exception);
+            applicationInsightsClient.TrackMetric("Exception", 1);
         }
 
         public void LogEvent(string eventName, string message)

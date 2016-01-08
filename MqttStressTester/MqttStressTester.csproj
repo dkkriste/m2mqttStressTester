@@ -96,6 +96,7 @@
     <Compile Include="Utils\ApplicationInsightsLogger.cs" />
     <Compile Include="Utils\TestLimits.cs" />
     <Compile Include="Utils\ThreadSleepTimes.cs" />
+    <Compile Include="Utils\TimeSpanMillisecondExtention.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
