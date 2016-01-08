@@ -58,6 +58,8 @@
                 Thread.Sleep(this.ThreadSleepTimes.GetRandomSleepTime());
             }
 
+            this.LogMetric(LoggerConstants.MissingMessages, this.TestLimits.NumberOfMessagesSent - this.TestLimits.NumberOfMessagesRecieved);
+
             while (!this.TestLimits.AreAllSendtMessagesRecieved() && !this.TestLimits.IsTimeUp())
             {
                 Thread.Sleep(this.ThreadSleepTimes.GetRandomSleepTime());
@@ -90,7 +92,7 @@
             catch (Exception exception)
             {
                 this.LogException(exception);
-                this.LogEvent("Exception", this.Client.IsConnected.ToString());
+                this.LogEvent(LoggerConstants.Exception, this.Client.IsConnected.ToString());
             }
         }
     }

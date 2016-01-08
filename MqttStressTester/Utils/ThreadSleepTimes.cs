@@ -22,6 +22,11 @@
             var minTicks = minSleepTime.Ticks;
             var maxTicks = maxSleepTime.Ticks;
 
+            if (minTicks >= maxTicks)
+            {
+                return new TimeSpan(minTicks);
+            }
+
             var randomNumberInInterval = LongRandom(minTicks, maxTicks);
 
             return new TimeSpan(randomNumberInInterval);

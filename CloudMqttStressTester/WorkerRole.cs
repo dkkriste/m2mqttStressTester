@@ -84,8 +84,8 @@ namespace CloudMqttStressTester
                     testSetup.RunThroughputTest();
 
                     //var concurrentConnectonTest = new ConcurrentConnectionTest();
-                    //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
-                    //concurrentConnectonTestSetup.RunThroughputTest(100, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 0, 1), new TimeSpan(0, 0, 2));
+                    //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, numberOfThreads);
+                    //concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0));
 
                     logger.LogEvent("Completed", "Completed test using " + numberOfThreads + " threads");
                 }

@@ -47,6 +47,7 @@
 
         protected void DisconectMqtt()
         {
+            this.Client.MqttMsgPublishReceived -= OnMqttClientMsgPublishReceived;
             this.Client.Disconnect();
         }
 
@@ -68,17 +69,17 @@
 
         protected void LogTestBegin()
         {
-            this.logger.LogMetric(LoggerConstants.Running + testName, 1);
+            this.logger.LogMetric(testName + "_" + LoggerConstants.Running, 1);
         }
 
         protected void LogTestEnd()
         {
-            this.logger.LogMetric(LoggerConstants.Running + testName, -1);
+            this.logger.LogMetric(testName + "_" + LoggerConstants.Running, -1);
         }
 
         protected void LogMetric(string metricName, double value)
         {
-            this.logger.LogMetric(metricName + testName, value);
+            this.logger.LogMetric(testName + "_" + metricName, value);
         }
 
         protected void LogException(Exception exception)
@@ -88,7 +89,7 @@
 
         protected void LogEvent(string eventName, string message)
         {
-            this.logger.LogEvent(eventName + testName, message);
+            this.logger.LogEvent(testName + "_" + eventName, message);
         }
 
         #endregion

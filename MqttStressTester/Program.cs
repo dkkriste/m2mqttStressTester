@@ -18,13 +18,13 @@
             ILogger logger = new ApplicationInsightsLogger();
             var brokerIp = CloudConfigurationManager.GetSetting("BrokerIp");
 
-            //var concurrentConnectonTest = new ConcurrentConnectionTest();
-            //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 2);
-            //concurrentConnectonTestSetup.RunThroughputTest(100, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 0, 1), new TimeSpan(0, 0, 2));
+            var concurrentConnectonTest = new ConcurrentConnectionTest();
+            var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 2);
+            concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0));
 
-            var throughputTest = new MessageThroughputTest();
-            var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 2);
-            throughputTestSetup.RunThroughputTest();
+            //var throughputTest = new MessageThroughputTest();
+            //var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 2);
+            //throughputTestSetup.RunThroughputTest();
         }
     }
 }

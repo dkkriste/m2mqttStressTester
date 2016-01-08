@@ -37,6 +37,10 @@
 
             while (!this.TestLimits.IsTimeUp())
             {
+                var message = new ThroughputTimeMessage { MessageNumber = this.TestLimits.NumberOfMessagesSent, MessageSendtTime = DateTimeOffset.Now };
+                var serializedMessage = JsonConvert.SerializeObject(message);
+                this.PublishMqtt(this.ClientId.ToString(), serializedMessage);
+
                 this.LogMetric(LoggerConstants.IsAlive, 1);
                 Thread.Sleep(this.ThreadSleepTimes.GetRandomSleepTime());
             }
@@ -51,12 +55,12 @@
             try
             {
                 var serializedMessage = Encoding.UTF8.GetString(e.Message);
-                this.LogEvent("Recieved", serializedMessage);
+                this.LogMetric(LoggerConstants.Received, 1);
             }
             catch (Exception exception)
             {
                 this.LogException(exception);
-                this.LogEvent("Exception", this.Client.IsConnected.ToString());
+                this.LogEvent(LoggerConstants.Exception, this.Client.IsConnected.ToString());
             }
         }
     }
