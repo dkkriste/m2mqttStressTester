@@ -15,16 +15,19 @@
     {
         public static void Main(string[] args)
         {
-            ILogger logger = new ApplicationInsightsLogger();
+            ILogger logger = new ConsoleLogger();
             var brokerIp = CloudConfigurationManager.GetSetting("BrokerIp");
 
             //var concurrentConnectonTest = new ConcurrentConnectionTest();
-            //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 2);
+            //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 1);
             //concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0));
 
-            var throughputTest = new MessageThroughputTest();
-            var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 8);
-            throughputTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 0, 10), new TimeSpan(0, 0, 0, 50));
+            while (true)
+            {
+                var throughputTest = new MessageThroughputTest();
+                var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 1);
+                throughputTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 0, 0, 10), new TimeSpan(0, 0, 0, 0, 50));
+            }
         }
     }
 }

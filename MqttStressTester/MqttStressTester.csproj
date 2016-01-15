@@ -94,6 +94,7 @@
     <Compile Include="Tests\MessageThroughputTest.cs" />
     <Compile Include="Tests\TestBase.cs" />
     <Compile Include="Utils\ApplicationInsightsLogger.cs" />
+    <Compile Include="Utils\ConsoleLogger.cs" />
     <Compile Include="Utils\TestLimits.cs" />
     <Compile Include="Utils\ThreadSleepTimes.cs" />
     <Compile Include="Utils\TimeSpanMillisecondExtention.cs" />

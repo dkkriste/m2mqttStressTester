@@ -14,6 +14,8 @@
 
         public const string IsAlive = "IsAlive";
 
+        public const string IsAliveRecieved = "IsAliveRecieved";
+
         public const string Received = "Received";
 
         public const string MessagesPrSecond = "MsgPrSec";
@@ -21,5 +23,11 @@
         public const string Exception = "Exception";
 
         public const string MissingMessages = "MissingMessages";
+
+        public const string PublishTime = "PublishTime";
+
+        public const string ConnectAndSubscribe = "ConnectAndSubscribe";
+
+        public const string MessagesNotArrived = "MessagesNotArrived";
     }
 }

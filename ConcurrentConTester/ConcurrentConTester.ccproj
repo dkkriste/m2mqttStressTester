@@ -5,13 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>2.8</ProductVersion>
-    <ProjectGuid>94e2924a-5a95-4a38-a946-719ab622bcff</ProjectGuid>
+    <ProjectGuid>2543b28a-fa2a-431b-8bf5-3f3657c00d29</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CloudConcurrentConnectionStressTester</RootNamespace>
-    <AssemblyName>CloudConcurrentConnectionStressTester</AssemblyName>
+    <RootNamespace>ConcurrentConTester</RootNamespace>
+    <AssemblyName>ConcurrentConTester</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
-    <Name>CloudConcurrentConnectionStressTester</Name>
+    <Name>ConcurrentConTester</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,16 +33,17 @@
   <!-- Items for the project -->
   <ItemGroup>
     <ServiceDefinition Include="ServiceDefinition.csdef" />
-    <ServiceConfiguration Include="ServiceConfiguration.LargeVM.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConcurrentConnectionTester\ConcurrentConnectionTester.csproj">
-      <Name>ConcurrentConnectionTester</Name>
-      <Project>{5e1ebd0e-f6fe-4100-a92a-37383045f56c}</Project>
+    <ProjectReference Include="..\ConcurrentConnectionStressTester\ConcurrentConnectionStressTester.csproj">
+      <Name>ConcurrentConnectionStressTester</Name>
+      <Project>{086ebbdf-4176-4af2-be75-0886407dbc7e}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>ConcurrentConnectionTester</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>False</UpdateDiagnosticsConnectionStringOnPublish>
+      <RoleName>ConcurrentConnectionStressTester</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -55,7 +56,7 @@
     <DiagnosticsConfiguration Include="ConcurrentConnectionTesterContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\concurrent-connection-test-large.azurePubxml" />
+    <PublishProfile Include="Profiles\concurrent-connection-test-largeProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

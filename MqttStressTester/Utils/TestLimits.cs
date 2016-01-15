@@ -1,6 +1,7 @@
 ﻿namespace MqttStressTester.Utils
 {
     using System;
+    using System.Diagnostics;
 
     public class TestLimits
     {
@@ -10,8 +11,11 @@
 
         private readonly TimeSpan maxDuration;
 
+        private readonly Stopwatch stopwatch;
+
         public TestLimits(int maxNumberOfMessages, TimeSpan maxDuration)
         {
+            stopwatch = new Stopwatch();
             startTime = DateTimeOffset.Now;
             this.maxDuration = maxDuration;
             this.MaxNumberOfMessages = maxNumberOfMessages;
@@ -49,6 +53,21 @@
         public TimeSpan TimeSpendt()
         {
             return DateTimeOffset.Now - startTime;
+        }
+
+        public void StartTest()
+        {
+            stopwatch.Start();
+        }
+
+        public void EndTest()
+        {
+            stopwatch.Stop();
+        }
+
+        public TimeSpan ActualTestTime()
+        {
+            return stopwatch.Elapsed;
         }
     }
 }
