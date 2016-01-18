@@ -101,7 +101,6 @@
             catch (Exception exception)
             {
                 this.LogException(exception);
-                this.LogEvent(LoggerConstants.Exception, this.Client.IsConnected.ToString());
             }
         }
     }
