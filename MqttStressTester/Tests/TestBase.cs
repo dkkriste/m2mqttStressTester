@@ -7,6 +7,7 @@
     using MqttStressTester.Utils;
 
     using uPLibrary.Networking.M2Mqtt;
+    using uPLibrary.Networking.M2Mqtt.Exceptions;
     using uPLibrary.Networking.M2Mqtt.Messages;
 
     public abstract class TestBase
@@ -53,7 +54,7 @@
 
         protected void SubscribeMqtt(string topicName)
         {
-            this.Client.Subscribe(new[] { topicName }, new[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+            this.Client.Subscribe(new[] { topicName }, new[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
         }
 
         protected void PublishMqtt(string topic, string message)
@@ -84,6 +85,21 @@
 
         protected void LogException(Exception exception)
         {
+            if (exception.GetType() == typeof(MqttCommunicationException))
+            {
+                var e = exception as MqttCommunicationException;
+                if (e.InnerException != null && e.InnerException.GetType() == typeof(MqttClientException))
+                {
+                    var inner = exception as MqttClientException;
+                    this.logger.LogEvent("MqttClientException", inner.ErrorCode.ToString());
+                }
+                else if (e.InnerException != null)
+                {
+                    this.logger.LogException(e.InnerException);
+                    this.logger.LogEvent("Inner", e.GetType().ToString());
+                }
+            }
+
             this.logger.LogException(exception);
         }
 

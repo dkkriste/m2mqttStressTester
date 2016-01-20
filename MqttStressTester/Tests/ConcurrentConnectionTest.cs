@@ -40,12 +40,19 @@
 
         public void RunTest()
         {
-            this.LogTestBegin();
+            Thread.Sleep(this.ThreadSleepTimes.GetRandomStartupTime());
             var stopWatch = new Stopwatch();
-
             stopWatch.Start();
-            this.ConnectMqtt();
-            this.SubscribeMqtt(this.ClientId.ToString());
+            try
+            {
+                this.ConnectMqtt();
+                this.SubscribeMqtt(this.ClientId.ToString());
+            }
+            catch (Exception exception)
+            {
+                LogException(exception);
+                return;
+            }
 
             stopWatch.Stop();
             this.LogMetric(LoggerConstants.ConnectAndSubscribe, stopWatch.Elapsed.GetMilliseconds());
@@ -79,8 +86,6 @@
             this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
             this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
             this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
-          
-            this.LogTestEnd();
         }
 
         protected override void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
