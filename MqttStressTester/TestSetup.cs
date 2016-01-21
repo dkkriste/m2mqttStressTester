@@ -50,12 +50,26 @@
                 var timeLimits = CreateTestLimits(DefaultMaxNumberOfMessages, DefaultMaxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(DefaultMinTimeBetweenMessages, DefaultMaxTimeBetweenMessages);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
-                tasks.Add(Task.Run(() => test.RunTest()));
+                try
+                {
+                    tasks.Add(Task.Run(() => test.RunTest()));
+                }
+                catch (Exception exception)
+                {
+                    logger.LogException(exception);
+                }
             }
 
             foreach (var task in tasks)
             {
-                task.Wait();
+                try
+                {
+                    task.Wait();
+                }
+                catch (Exception exception)
+                {
+                    logger.LogException(exception);
+                }
             }
         }
 
@@ -67,12 +81,26 @@
                 var timeLimits = CreateTestLimits(maxNumberOfMessages, maxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
-                tasks.Add(Task.Run(() => test.RunTest()));
+                try
+                {
+                    tasks.Add(Task.Run(() => test.RunTest()));
+                }
+                catch (Exception exception)
+                {
+                    logger.LogException(exception);
+                }
             }
 
             foreach (var task in tasks)
             {
-                task.Wait();
+                try
+                {
+                    task.Wait();
+                }
+                catch (Exception exception)
+                {
+                    logger.LogException(exception);
+                }
             }
         }
 

@@ -53,7 +53,7 @@
 
         protected void SubscribeMqtt(string topicName)
         {
-            this.Client.Subscribe(new[] { topicName }, new[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+            this.Client.Subscribe(new[] { topicName }, new[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
         }
 
         protected void PublishMqtt(string topic, string message)

@@ -40,7 +40,6 @@
 
         public void RunTest()
         {
-            this.LogTestBegin();
             var stopWatch = new Stopwatch();
 
             stopWatch.Start();
@@ -79,8 +78,7 @@
             this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
             this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
             this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
-          
-            this.LogTestEnd();
+            this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesRecieved / (this.TestLimits.ActualTestTime().GetMilliseconds() / 1000));
         }
 
         protected override void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)

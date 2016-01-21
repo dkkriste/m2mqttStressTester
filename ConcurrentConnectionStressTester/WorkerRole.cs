@@ -17,7 +17,7 @@ namespace ConcurrentConnectionStressTester
 
     public class WorkerRole : RoleEntryPoint
     {
-        private const int DefaultNumberOfThreads = 8;
+        private const int DefaultNumberOfThreads = 32;
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly ManualResetEvent runCompleteEvent = new ManualResetEvent(false);
@@ -39,7 +39,7 @@ namespace ConcurrentConnectionStressTester
         public override bool OnStart()
         {
             // Set the maximum number of concurrent connections
-            ServicePointManager.DefaultConnectionLimit = 16;
+            ServicePointManager.DefaultConnectionLimit = 10000;
 
             // For information on handling configuration changes
             // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
@@ -94,12 +94,13 @@ namespace ConcurrentConnectionStressTester
 
                     var concurrentConnectonTest = new ConcurrentConnectionTest();
                     var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, numberOfThreads);
-                    concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0));
+                    concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3));
 
                     logger.LogEvent("Completed", "Completed test using " + numberOfThreads + " threads");
                 }
                 catch (Exception exception)
                 {
+                    logger.LogEvent("Incomplete", "Completed test using " + numberOfThreads + " threads");
                     logger.LogException(exception);
                 }
 

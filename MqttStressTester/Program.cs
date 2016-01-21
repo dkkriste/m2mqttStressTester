@@ -25,7 +25,7 @@
             while (true)
             {
                 var throughputTest = new MessageThroughputTest();
-                var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 1);
+                var throughputTestSetup = new TestSetup(logger, brokerIp, throughputTest, 16);
                 throughputTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 0, 0, 10), new TimeSpan(0, 0, 0, 0, 50));
             }
         }
