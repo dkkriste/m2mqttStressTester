@@ -17,6 +17,13 @@
             randomNumberGenerator = new Random();
         }
 
+        public TimeSpan GetRandomStartupTime()
+        {
+            var maxTicks = maxSleepTime.Ticks * 5;
+            var randomNumberInInterval = LongRandom(0, maxTicks);
+            return new TimeSpan(randomNumberInInterval);
+        }
+
         public TimeSpan GetRandomSleepTime()
         {
             var minTicks = minSleepTime.Ticks;
