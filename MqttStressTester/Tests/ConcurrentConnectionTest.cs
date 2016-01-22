@@ -1,7 +1,9 @@
 ﻿namespace MqttStressTester.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
 
@@ -40,24 +42,17 @@
 
         public void RunTest()
         {
-            Thread.Sleep(this.ThreadSleepTimes.GetRandomStartupTime());
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
             try
             {
-            this.ConnectMqtt();
-            this.SubscribeMqtt(this.ClientId.ToString());
+                TryConnectAndSubscribe();
             }
             catch (Exception exception)
             {
-                LogException(exception);
+                this.LogException(exception);
                 return;
             }
 
-            stopWatch.Stop();
-            this.LogMetric(LoggerConstants.ConnectAndSubscribe, stopWatch.Elapsed.GetMilliseconds());
-            stopWatch.Reset();
-
+            var stopWatch = new Stopwatch();
 
             while (!this.TestLimits.IsTimeUp())
             {
@@ -79,13 +74,23 @@
                 stopWatch.Reset();
             }
 
-            this.DisconectMqtt();
+            try
+            {
+                this.DisconectMqtt();
+            }
+            catch (Exception exception)
+            {
+                this.LogException(exception);
+            }
 
             this.LogMetric(LoggerConstants.PublishTime, publishTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesSent);
             this.LogMetric(LoggerConstants.Sent, this.TestLimits.NumberOfMessagesSent);
-            this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
             this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
-            this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
+            if (this.TestLimits.NumberOfMessagesRecieved > 0)
+            {
+                this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
+                this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
+            }
         }
 
         protected override void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
@@ -107,6 +112,27 @@
             {
                 this.LogException(exception);
             }
+        }
+
+        private void TryConnectAndSubscribe()
+        {
+            int tries = 0;
+            while (tries < 3)
+            {
+                try
+                {
+                    Thread.Sleep(this.ThreadSleepTimes.GetRandomStartupTime());
+                    this.ConnectMqtt();
+                    break;
+                }
+                catch (Exception)
+                {
+                }
+
+                tries++;
+            }
+
+            this.SubscribeMqtt(this.ClientId.ToString());
         }
     }
 }

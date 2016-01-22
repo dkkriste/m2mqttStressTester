@@ -8,19 +8,21 @@
 
         private readonly TimeSpan maxSleepTime;
 
+        private readonly TimeSpan maxStartupDelay;
+
         private readonly Random randomNumberGenerator;
 
-        public ThreadSleepTimes(TimeSpan minSleepTime, TimeSpan maxSleepTime)
+        public ThreadSleepTimes(TimeSpan minSleepTime, TimeSpan maxSleepTime, TimeSpan maxStartupDelay)
         {
             this.minSleepTime = minSleepTime;
             this.maxSleepTime = maxSleepTime;
+            this.maxStartupDelay = maxStartupDelay;
             randomNumberGenerator = new Random();
         }
 
         public TimeSpan GetRandomStartupTime()
         {
-            var maxTicks = maxSleepTime.Ticks * 5;
-            var randomNumberInInterval = LongRandom(0, maxTicks);
+            var randomNumberInInterval = LongRandom(0, maxStartupDelay.Ticks);
             return new TimeSpan(randomNumberInInterval);
         }
 

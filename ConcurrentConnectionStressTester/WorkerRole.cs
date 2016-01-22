@@ -94,7 +94,7 @@ namespace ConcurrentConnectionStressTester
 
                     var concurrentConnectonTest = new ConcurrentConnectionTest();
                     var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, numberOfThreads);
-                    concurrentConnectonTestSetup.RunThroughputTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3));
+                    concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 1, 0));
 
                     logger.LogEvent("Completed", "Completed test using " + numberOfThreads + " threads");
                 }
@@ -104,7 +104,7 @@ namespace ConcurrentConnectionStressTester
                     logger.LogException(exception);
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(10000);
             }
         }
     }
