@@ -39,7 +39,7 @@
             DefaultMaxNumberOfMessages = int.MaxValue;
             DefaultMinTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 10);
             DefaultMaxTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 50);
-            DefaultMaxStartupDelay = new TimeSpan(0, 0, 30);
+            DefaultMaxStartupDelay = new TimeSpan(0, 0, 10);
         }
 
         /// <summary>

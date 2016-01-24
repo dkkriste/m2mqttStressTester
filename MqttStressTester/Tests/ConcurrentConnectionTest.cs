@@ -86,9 +86,9 @@
             this.LogMetric(LoggerConstants.PublishTime, publishTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesSent);
             this.LogMetric(LoggerConstants.Sent, this.TestLimits.NumberOfMessagesSent);
             this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
+            this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
             if (this.TestLimits.NumberOfMessagesRecieved > 0)
             {
-                this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
                 this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
             }
         }
