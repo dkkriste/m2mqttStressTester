@@ -40,11 +40,21 @@
             return new ConcurrentConnectionTest(logger, brokerIp, testLimitses, threadSleepTimeses);
         }
 
-        public void RunTest()
+        public void RunTest(int startupWaitMultiplier)
         {
+            var startupWaitTime = this.ThreadSleepTimes.GetFixedStartupTime(startupWaitMultiplier);
+
+            Thread.Sleep(startupWaitTime);
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             try
             {
-                TryConnectAndSubscribe();
+                this.ConnectMqtt();
+                this.SubscribeMqtt(this.ClientId.ToString());
+
+                stopWatch.Stop();
+                this.LogMetric(LoggerConstants.ConnectAndSubscribe, stopWatch.Elapsed.GetMilliseconds());
+                stopWatch.Reset();
             }
             catch (Exception exception)
             {
@@ -52,8 +62,8 @@
                 return;
             }
 
-            var stopWatch = new Stopwatch();
-
+            var loggingInterval = new TimeSpan(0, 0, 10);
+            var elapsedTimeSinceLogging = new TimeSpan();
             while (!this.TestLimits.IsTimeUp())
             {
                 stopWatch.Start();
@@ -68,7 +78,18 @@
                 var sleepTime = this.ThreadSleepTimes.GetRandomSleepTime();
                 if (stopWatch.Elapsed < sleepTime)
                 {
+                    elapsedTimeSinceLogging += sleepTime - stopWatch.Elapsed;
                     Thread.Sleep(sleepTime - stopWatch.Elapsed);
+                }
+                else
+                {
+                    elapsedTimeSinceLogging += stopWatch.Elapsed;
+                }
+
+                if (elapsedTimeSinceLogging > loggingInterval)
+                {
+                    PeriodicLogging();
+                    elapsedTimeSinceLogging = new TimeSpan();
                 }
 
                 stopWatch.Reset();
@@ -114,25 +135,16 @@
             }
         }
 
-        private void TryConnectAndSubscribe()
+        private void PeriodicLogging()
         {
-            int tries = 0;
-            while (tries < 3)
+            this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.PublishTime, publishTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesSent);
+            this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.Sent, this.TestLimits.NumberOfMessagesSent);
+            this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.Max, maxTime.GetMilliseconds());
+            this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
+            if (this.TestLimits.NumberOfMessagesRecieved > 0)
             {
-                try
-                {
-                    Thread.Sleep(this.ThreadSleepTimes.GetRandomStartupTime());
-                    this.ConnectMqtt();
-                    break;
-                }
-                catch (Exception)
-                {
-                }
-
-                tries++;
+                this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
             }
-
-            this.SubscribeMqtt(this.ClientId.ToString());
         }
     }
 }

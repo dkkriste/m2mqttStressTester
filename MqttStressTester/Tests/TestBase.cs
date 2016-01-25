@@ -43,7 +43,11 @@
 
         protected void ConnectMqtt()
         {
-            this.Client.Connect(ClientId.ToString());
+            var result = this.Client.Connect(ClientId.ToString());
+            if (result != 0)
+            {
+                throw new Exception("Failed to connect, return message = " + result);
+            }
         }
 
         protected void DisconectMqtt()

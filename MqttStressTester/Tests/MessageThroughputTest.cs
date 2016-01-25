@@ -45,7 +45,7 @@
             return new MessageThroughputTest(logger, brokerIp, testLimitses, threadSleepTimeses);
         }
 
-        public void RunTest()
+        public void RunTest(int startupWaitMultiplier)
         {
             var stopWatch = new Stopwatch();
 

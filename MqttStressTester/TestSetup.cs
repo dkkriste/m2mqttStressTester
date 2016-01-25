@@ -18,6 +18,8 @@
 
         public readonly TimeSpan DefaultMaxTimeBetweenMessages;
 
+        public readonly TimeSpan DefaultFixedStartupDelay;
+
         public readonly TimeSpan DefaultMaxStartupDelay;
 
         private readonly ILogger logger;
@@ -39,6 +41,7 @@
             DefaultMaxNumberOfMessages = int.MaxValue;
             DefaultMinTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 10);
             DefaultMaxTimeBetweenMessages = new TimeSpan(0, 0, 0, 0, 50);
+            DefaultFixedStartupDelay = new TimeSpan(0, 0, 10);
             DefaultMaxStartupDelay = new TimeSpan(0, 0, 10);
         }
 
@@ -51,9 +54,10 @@
             for (var i = 0; i < threads; i++)
             {
                 var timeLimits = CreateTestLimits(DefaultMaxNumberOfMessages, DefaultMaxTestTime);
-                var threadSleepTimes = CreateThreadSleepTimes(DefaultMinTimeBetweenMessages, DefaultMaxTimeBetweenMessages, DefaultMaxStartupDelay);
+                var threadSleepTimes = CreateThreadSleepTimes(DefaultMinTimeBetweenMessages, DefaultMaxTimeBetweenMessages, DefaultFixedStartupDelay, DefaultMaxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
-                tasks.Add(Task.Run(() => test.RunTest()));
+                var startupWaitMultiplier = i / 10;
+                tasks.Add(Task.Run(() => test.RunTest(startupWaitMultiplier)));
             }
 
             foreach (var task in tasks)
@@ -69,22 +73,16 @@
             }
         }
 
-        public void RunTest(int maxNumberOfMessages, TimeSpan maxTestTime, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan maxStartupDelay)
+        public void RunTest(int maxNumberOfMessages, TimeSpan maxTestTime, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan fixedStartupDelay, TimeSpan maxStartupDelay)
         {
             var tasks = new List<Task>();
             for (var i = 0; i < threads; i++)
             {
                 var timeLimits = CreateTestLimits(maxNumberOfMessages, maxTestTime);
-                var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, maxStartupDelay);
+                var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, fixedStartupDelay, maxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
-                try
-                {
-                    tasks.Add(Task.Run(() => test.RunTest()));
-                }
-                catch (Exception exception)
-                {
-                    logger.LogException(exception);
-                }
+                var startupWaitMultiplier = i / 10;
+                tasks.Add(Task.Run(() => test.RunTest(startupWaitMultiplier)));
             }
 
             foreach (var task in tasks)
@@ -105,9 +103,9 @@
             return new TestLimits(maxNumberOfMessages, maxTestTime);
         }
 
-        private ThreadSleepTimes CreateThreadSleepTimes(TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan maxStartupDelay)
+        private ThreadSleepTimes CreateThreadSleepTimes(TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan fixedStartupDelay, TimeSpan maxStartupDelay)
         {
-            return new ThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, maxStartupDelay);
+            return new ThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, fixedStartupDelay, maxStartupDelay);
         }
     }
 }

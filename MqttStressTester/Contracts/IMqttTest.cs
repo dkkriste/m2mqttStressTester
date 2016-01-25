@@ -9,6 +9,6 @@
     {
         IMqttTest Create(ILogger logger, string brokerIp, TestLimits testLimitses, ThreadSleepTimes threadSleepTimeses);
 
-        void RunTest();
+        void RunTest(int startupWaitMultiplier);
     }
 }

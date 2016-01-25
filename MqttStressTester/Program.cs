@@ -28,7 +28,7 @@
             while (true)
             {
                 var throughputTest = new MessageThroughputTest();
-                var testSetup = new TestSetup(logger, "40.118.3.244", throughputTest, 32);
+                var testSetup = new TestSetup(logger, brokerIp, throughputTest, 32); // "40.118.3.244"
                 testSetup.RunTest();
 
                 //var concurrentConnectonTest = new ConcurrentConnectionTest();
