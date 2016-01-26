@@ -92,7 +92,7 @@ namespace ConcurrentConnectionStressTester
                 {
                     var concurrentConnectonTest = new ConcurrentConnectionTest();
                     var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, numberOfThreads);
-                    concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 30, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 30),  new TimeSpan(0, 1, 0));
+                    concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 60, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 30),  new TimeSpan(0, 1, 0));
                 }
                 catch (Exception exception)
                 {

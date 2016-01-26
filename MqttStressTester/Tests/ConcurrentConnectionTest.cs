@@ -62,7 +62,7 @@
                 return;
             }
 
-            var loggingInterval = new TimeSpan(0, 0, 10);
+            var loggingInterval = new TimeSpan(0, 10, 0);
             var elapsedTimeSinceLogging = new TimeSpan();
             while (!this.TestLimits.IsTimeUp())
             {
