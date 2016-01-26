@@ -148,6 +148,7 @@
             if (this.TestLimits.NumberOfMessagesRecieved > 0)
             {
                 this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
+                this.LogMetric(LoggerConstants.PeriodicPrefix + LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesRecieved / this.TestLimits.ActualTestTime().TotalSeconds);
             }
         }
     }
