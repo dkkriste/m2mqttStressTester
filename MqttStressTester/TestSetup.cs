@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using MqttStressTester.Contracts;
@@ -28,14 +29,14 @@
 
         private readonly IMqttTest testToBeRun;
 
-        private readonly int threads;
+        private readonly int numberOfThreads;
 
-        public TestSetup(ILogger logger, string brokerIp, IMqttTest testToBeRun, int threads)
+        public TestSetup(ILogger logger, string brokerIp, IMqttTest testToBeRun, int numberOfThreads)
         {
             this.logger = logger;
             this.brokerIp = brokerIp;
             this.testToBeRun = testToBeRun;
-            this.threads = threads;
+            this.numberOfThreads = numberOfThreads;
 
             DefaultMaxTestTime = new TimeSpan(0, 1, 0);
             DefaultMaxNumberOfMessages = int.MaxValue;
@@ -50,21 +51,23 @@
         /// </summary>
         public void RunTest()
         {
-            var tasks = new List<Task>();
-            for (var i = 0; i < threads; i++)
+            var threads = new List<Thread>();
+            for (var i = 0; i < numberOfThreads; i++)
             {
                 var timeLimits = CreateTestLimits(DefaultMaxNumberOfMessages, DefaultMaxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(DefaultMinTimeBetweenMessages, DefaultMaxTimeBetweenMessages, DefaultFixedStartupDelay, DefaultMaxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
                 var startupWaitMultiplier = i / 10;
-                tasks.Add(Task.Run(() => test.RunTest(startupWaitMultiplier)));
+                var thread = new Thread(() => test.RunTest(startupWaitMultiplier));
+                threads.Add(thread);
+                thread.Start();
             }
 
-            foreach (var task in tasks)
+            foreach (var thread in threads)
             {
                 try
                 {
-                    task.Wait();
+                    thread.Join();
                 }
                 catch (Exception exception)
                 {
@@ -75,21 +78,23 @@
 
         public void RunTest(int maxNumberOfMessages, TimeSpan maxTestTime, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan fixedStartupDelay, TimeSpan maxStartupDelay)
         {
-            var tasks = new List<Task>();
-            for (var i = 0; i < threads; i++)
+            var threads = new List<Thread>();
+            for (var i = 0; i < numberOfThreads; i++)
             {
                 var timeLimits = CreateTestLimits(maxNumberOfMessages, maxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, fixedStartupDelay, maxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
                 var startupWaitMultiplier = i / 10;
-                tasks.Add(Task.Run(() => test.RunTest(startupWaitMultiplier)));
+                var thread = new Thread(() => test.RunTest(startupWaitMultiplier));
+                threads.Add(thread);
+                thread.Start();
             }
 
-            foreach (var task in tasks)
+            foreach (var thread in threads)
             {
                 try
                 {
-                    task.Wait();
+                    thread.Join();
                 }
                 catch (Exception exception)
                 {

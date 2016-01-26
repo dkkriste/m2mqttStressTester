@@ -77,8 +77,6 @@ namespace CloudMqttStressTester
             {
                 try
                 {
-                    logger.LogEvent("Started", "Broker: " + brokerIp);
-
                     var throughputTest = new MessageThroughputTest();
                     var testSetup = new TestSetup(logger, brokerIp, throughputTest, numberOfThreads);
                     testSetup.RunTest();
@@ -86,15 +84,17 @@ namespace CloudMqttStressTester
                     //var concurrentConnectonTest = new ConcurrentConnectionTest();
                     //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, numberOfThreads);
                     //concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 10, 0), new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0));
-
-                    logger.LogEvent("Completed", "Completed test using " + numberOfThreads + " threads");
                 }
                 catch (Exception exception)
                 {
                     logger.LogException(exception); 
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(new TimeSpan(0, 0, 10));
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.WaitForFullGCComplete();
+                GC.Collect();
             }
         }
     }

@@ -64,6 +64,7 @@
 
             var loggingInterval = new TimeSpan(0, 10, 0);
             var elapsedTimeSinceLogging = new TimeSpan();
+            this.TestLimits.StartTest();
             while (!this.TestLimits.IsTimeUp())
             {
                 stopWatch.Start();
@@ -78,7 +79,7 @@
                 var sleepTime = this.ThreadSleepTimes.GetRandomSleepTime();
                 if (stopWatch.Elapsed < sleepTime)
                 {
-                    elapsedTimeSinceLogging += sleepTime - stopWatch.Elapsed;
+                    elapsedTimeSinceLogging += sleepTime;
                     Thread.Sleep(sleepTime - stopWatch.Elapsed);
                 }
                 else
@@ -94,6 +95,8 @@
 
                 stopWatch.Reset();
             }
+
+            this.TestLimits.EndTest();
 
             try
             {
@@ -111,6 +114,7 @@
             if (this.TestLimits.NumberOfMessagesRecieved > 0)
             {
                 this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
+                this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesRecieved / this.TestLimits.ActualTestTime().TotalSeconds);
             }
         }
 

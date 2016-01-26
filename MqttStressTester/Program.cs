@@ -34,6 +34,13 @@
                 var concurrentConnectonTest = new ConcurrentConnectionTest();
                 var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
                 concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 5),  new TimeSpan(0, 0, 10));
+
+                Thread.Sleep(new TimeSpan(0, 0, 10));
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.WaitForFullGCComplete();
+                GC.Collect();
             }
         }
     }

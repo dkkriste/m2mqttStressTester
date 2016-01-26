@@ -100,7 +100,11 @@ namespace ConcurrentConnectionStressTester
                     logger.LogException(exception);
                 }
 
-                await Task.Delay(10000);
+                await Task.Delay(new TimeSpan(0, 1, 0));
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.WaitForFullGCComplete();
+                GC.Collect();
             }
         }
     }
