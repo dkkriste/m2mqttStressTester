@@ -51,23 +51,22 @@
         /// </summary>
         public void RunTest()
         {
-            var threads = new List<Thread>();
+            var tasks = new List<Task>();
             for (var i = 0; i < numberOfThreads; i++)
             {
                 var timeLimits = CreateTestLimits(DefaultMaxNumberOfMessages, DefaultMaxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(DefaultMinTimeBetweenMessages, DefaultMaxTimeBetweenMessages, DefaultFixedStartupDelay, DefaultMaxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
                 var startupWaitMultiplier = i / 10;
-                var thread = new Thread(() => test.RunTest(startupWaitMultiplier));
-                threads.Add(thread);
-                thread.Start();
+                var task = Task.Factory.StartNew(() => test.RunTest(startupWaitMultiplier), TaskCreationOptions.LongRunning);
+                tasks.Add(task);
             }
 
-            foreach (var thread in threads)
+            foreach (var task in tasks)
             {
                 try
                 {
-                    thread.Join();
+                    task.Wait();
                 }
                 catch (Exception exception)
                 {
@@ -78,23 +77,22 @@
 
         public void RunTest(int maxNumberOfMessages, TimeSpan maxTestTime, TimeSpan minTimeBetweenMessages, TimeSpan maxTimeBetweenMessages, TimeSpan fixedStartupDelay, TimeSpan maxStartupDelay)
         {
-            var threads = new List<Thread>();
+            var tasks = new List<Task>();
             for (var i = 0; i < numberOfThreads; i++)
             {
                 var timeLimits = CreateTestLimits(maxNumberOfMessages, maxTestTime);
                 var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, fixedStartupDelay, maxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
                 var startupWaitMultiplier = i / 10;
-                var thread = new Thread(() => test.RunTest(startupWaitMultiplier));
-                threads.Add(thread);
-                thread.Start();
+                var task = Task.Factory.StartNew(() => test.RunTest(startupWaitMultiplier), TaskCreationOptions.LongRunning);
+                tasks.Add(task);
             }
 
-            foreach (var thread in threads)
+            foreach (var task in tasks)
             {
                 try
                 {
-                    thread.Join();
+                    task.Wait();
                 }
                 catch (Exception exception)
                 {
