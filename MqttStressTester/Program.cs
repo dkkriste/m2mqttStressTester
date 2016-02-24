@@ -27,13 +27,17 @@
 
             while (true)
             {
-                //var throughputTest = new MessageThroughputTest();
-                //var testSetup = new TestSetup(logger, brokerIp, throughputTest, 32); // "40.118.3.244"
-                //testSetup.RunTest();
+                var throughputTest = new MessageThroughputTest();
+                var testSetup = new TestSetup(logger, "127.0.0.1", throughputTest, 128); // "40.118.3.244"
+                testSetup.RunTest();
 
-                var concurrentConnectonTest = new ConcurrentConnectionTest();
-                var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
-                concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 5),  new TimeSpan(0, 0, 10));
+                //var broadcastTest = new BroadcastTest();
+                //var broadcastTestTestSetup = new TestSetup(logger, "40.115.17.8", broadcastTest, 16);
+                //broadcastTestTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 5, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 10), new TimeSpan(0, 0, 10));
+
+                //var concurrentConnectonTest = new ConcurrentConnectionTest();
+                //var concurrentConnectonTestSetup = new TestSetup(logger, brokerIp, concurrentConnectonTest, 16);
+                //concurrentConnectonTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 1, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 5),  new TimeSpan(0, 0, 10));
 
                 Thread.Sleep(new TimeSpan(0, 0, 10));
 

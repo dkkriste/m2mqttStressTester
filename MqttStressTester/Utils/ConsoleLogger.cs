@@ -8,7 +8,7 @@
     {
         public void LogException(Exception exception)
         {
-            Console.WriteLine(exception.Message);
+            Console.WriteLine("Exception: " + exception.Message + " __ " + exception.StackTrace);
         }
 
         public void LogEvent(string eventName, string message)

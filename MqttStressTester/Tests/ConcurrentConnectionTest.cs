@@ -118,6 +118,11 @@
             }
         }
 
+        public void RunAsSubscriber()
+        {
+            RunTest(0); 
+        }
+
         protected override void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
             try

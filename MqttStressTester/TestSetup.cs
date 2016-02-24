@@ -84,7 +84,7 @@
                 var threadSleepTimes = CreateThreadSleepTimes(minTimeBetweenMessages, maxTimeBetweenMessages, fixedStartupDelay, maxStartupDelay);
                 var test = testToBeRun.Create(logger, brokerIp, timeLimits, threadSleepTimes);
                 var startupWaitMultiplier = i / 10;
-                var task = Task.Factory.StartNew(() => test.RunTest(startupWaitMultiplier), TaskCreationOptions.LongRunning);
+                Task task = Task.Factory.StartNew(() => test.RunTest(startupWaitMultiplier), TaskCreationOptions.LongRunning);
                 tasks.Add(task);
             }
 

@@ -63,7 +63,7 @@
 
         protected void PublishMqtt(string topic, string message)
         {
-            var v = this.Client.Publish(topic, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+            var v = this.Client.Publish(topic, Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
         }
 
         protected abstract void OnMqttClientMsgPublishReceived(object sender, MqttMsgPublishEventArgs e);
