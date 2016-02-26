@@ -28,6 +28,10 @@
 
         public const string ConnectAndSubscribe = "ConnectAndSubscribe";
 
+        public const string Connect = "Connect";
+
+        public const string Subscribe = "Subscribe";
+
         public const string MessagesNotArrived = "MessagesNotArrived";
 
         public const string PeriodicPrefix = "Periodic_";

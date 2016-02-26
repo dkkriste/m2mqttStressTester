@@ -15,11 +15,9 @@
 
     public class BroadcastReceiveTest : TestBase, IMqttTest
     {
-        private TimeSpan totalTime;
+        private long totalTimeTicks;
 
-        private TimeSpan maxTime;
-
-        private TimeSpan publishTime;
+        private long maxTimeTicks;
 
         public BroadcastReceiveTest() : base(null, string.Empty, null, null, string.Empty)
         {
@@ -28,14 +26,11 @@
         public BroadcastReceiveTest(ILogger logger, string brokerIp, TestLimits testLimits, ThreadSleepTimes threadSleepTimes)
             : base(logger, brokerIp, testLimits, threadSleepTimes, "BroadcastReceiveTest")
         {
-            totalTime = new TimeSpan();
-            maxTime = new TimeSpan();
-            publishTime = new TimeSpan();
         }
 
         public IMqttTest Create(ILogger logger, string brokerIp, TestLimits testLimitses, ThreadSleepTimes threadSleepTimeses)
         {
-            return new BroadcastTest(logger, brokerIp, testLimitses, threadSleepTimeses);
+            return new BroadcastReceiveTest(logger, brokerIp, testLimitses, threadSleepTimeses);
         }
 
         public void RunTest(int startupWaitMultiplier)
@@ -66,11 +61,11 @@
                 this.LogException(exception);
             }
 
-            this.LogMetric(LoggerConstants.Max, maxTime.GetMilliseconds());
+            this.LogMetric(LoggerConstants.Max, maxTimeTicks / 10000);
             this.LogMetric(LoggerConstants.Received, this.TestLimits.NumberOfMessagesRecieved);
             if (this.TestLimits.NumberOfMessagesRecieved > 0)
             {
-                this.LogMetric(LoggerConstants.Average, totalTime.GetMilliseconds() / this.TestLimits.NumberOfMessagesRecieved);
+                this.LogMetric(LoggerConstants.Average, totalTimeTicks / 10000 / this.TestLimits.NumberOfMessagesRecieved);
                 this.LogMetric(LoggerConstants.MessagesPrSecond, this.TestLimits.NumberOfMessagesRecieved / this.TestLimits.ActualTestTime().TotalSeconds);
             }
         }
@@ -81,11 +76,11 @@
             {
                 var serializedMessage = Encoding.UTF8.GetString(e.Message);
                 var message = JsonConvert.DeserializeObject<ThroughputTimeMessage>(serializedMessage);
-                var roundTripTime = DateTimeOffset.Now - message.MessageSendtTime;
-                totalTime += roundTripTime;
-                if (roundTripTime > maxTime)
+                var roundTripTime = (DateTimeOffset.Now - message.MessageSendtTime).Ticks;
+                Interlocked.Add(ref totalTimeTicks, roundTripTime);
+                if (roundTripTime > maxTimeTicks)
                 {
-                    maxTime = roundTripTime;
+                    maxTimeTicks = roundTripTime;
                 }
 
                 this.TestLimits.MessageRecieved();

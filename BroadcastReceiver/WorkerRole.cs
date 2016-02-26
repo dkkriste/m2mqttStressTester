@@ -92,7 +92,7 @@ namespace BroadcastReceiver
                 {
                     var broadcastTest = new BroadcastReceiveTest();
                     var broadcastTestTestSetup = new TestSetup(logger, brokerIp, broadcastTest, numberOfThreads);
-                    broadcastTestTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 30, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 20), new TimeSpan(0, 0, 20));
+                    broadcastTestTestSetup.RunTest(int.MaxValue, new TimeSpan(0, 60, 0), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 3), new TimeSpan(0, 0, 20), new TimeSpan(0, 0, 20));
                 }
                 catch (Exception exception)
                 {

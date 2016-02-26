@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.Threading;
 
     public class TestLimits
     {
@@ -23,7 +24,7 @@
 
         public int NumberOfMessagesSent { get; private set; }
 
-        public int NumberOfMessagesRecieved { get; private set; }
+        public int NumberOfMessagesRecieved; 
 
         public bool AreMaxMessagesSendt()
         {
@@ -42,7 +43,7 @@
 
         public void MessageRecieved()
         {
-            NumberOfMessagesRecieved++;
+            Interlocked.Increment(ref NumberOfMessagesRecieved);
         }
 
         public void MessagesSent()

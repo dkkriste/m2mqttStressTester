@@ -46,15 +46,13 @@
 
             Thread.Sleep(startupWaitTime);
             var stopWatch = new Stopwatch();
-            stopWatch.Start();
             try
             {
-                this.ConnectMqtt();
-                this.SubscribeMqtt(this.ClientId.ToString());
-
-                stopWatch.Stop();
-                this.LogMetric(LoggerConstants.ConnectAndSubscribe, stopWatch.Elapsed.GetMilliseconds());
                 stopWatch.Reset();
+                stopWatch.Start();
+                this.ConnectMqtt();
+                stopWatch.Stop();
+                this.LogMetric(LoggerConstants.Connect, stopWatch.Elapsed.GetMilliseconds());
             }
             catch (Exception exception)
             {
@@ -62,6 +60,22 @@
                 return;
             }
 
+            try
+            {
+                stopWatch.Reset();
+                stopWatch.Start();
+                this.SubscribeMqtt(this.ClientId.ToString());
+                stopWatch.Stop();
+                this.LogMetric(LoggerConstants.Subscribe, stopWatch.Elapsed.GetMilliseconds());
+                
+            }
+            catch (Exception exception)
+            {
+                this.LogException(exception);
+                return;
+            }
+
+            stopWatch.Reset();
             var loggingInterval = new TimeSpan(0, 10, 0);
             var elapsedTimeSinceLogging = new TimeSpan();
             this.TestLimits.StartTest();
